@@ -50,3 +50,45 @@ redis> LRANGE 0 -1
 ## LPUSHX key value
 
 - O(1)
+
+## LPOP key
+
+- O(1)
+
+```
+redis> LPOP listkey
+"zero"
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+3) "three"
+```
+
+## RPOP key
+
+- O(1)
+
+```
+redis> RPOP listkey
+"three"
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+```
+
+## RPOPLPUSH
+
+- O(1)
+
+```
+redis> RPUSH listkey three
+(integer) 3
+redis> RPOPLPUSH listkey destlistkey
+"three"
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+redis> LRANGE destlistkey 0 -1
+1) "three"
+```
+

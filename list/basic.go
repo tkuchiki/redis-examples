@@ -53,7 +53,68 @@ func main() {
 
 	pp.Println(list)
 
-	// delete listkey1
+	// LPOP
+	fmt.Println("# LPOP", key1)
+	lpoped, _ := util.LPop(client, key1)
+	pp.Println(lpoped)
+	fmt.Println()
+
+	// LPOPed LIST
+	fmt.Println("# LRange", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+
+	fmt.Println()
+
+	// RPOP
+	fmt.Println("# RPOP", key1)
+	rpoped, _ := util.RPop(client, key1)
+	pp.Println(rpoped)
+	fmt.Println()
+
+	// RPOPed LIST
+	fmt.Println("# LRange", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+	fmt.Println()
+
+	// RPUSH three
+	fmt.Println("# RPUSH", key1, val3)
+	_ = util.RPush(client, key1, val3)
+
+	fmt.Println()
+
+	key2 := "destlistkey"
+
+	// RPOPLPUSH
+	fmt.Println("# RPOPLPUSH", key1, key2)
+	rpoped, _ = util.RPopLPush(client, key1, key2)
+	pp.Println(rpoped)
+	fmt.Println()
+
+	// RPOPLPUSHed LIST
+	fmt.Println("# LRange", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+
+	fmt.Println()
+
+	// RPOPLPUSHed LIST
+	fmt.Println("# LRange", key2, 0, -1)
+	list, _ = util.LRangeAll(client, key2)
+
+	pp.Println(list)
+
+	fmt.Println()
+
+	// delete listkey
 	fmt.Println("# DEL", key1)
 	_ = util.Del(client, key1)
+
+	// delete destlistkey
+	fmt.Println("# DEL", key2)
+	_ = util.Del(client, key2)
 }

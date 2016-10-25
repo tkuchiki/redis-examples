@@ -37,3 +37,21 @@ func LRange(client *redis.Client, key string, start, stop int64) ([]string, erro
 func LRangeAll(client *redis.Client, key string) ([]string, error) {
 	return client.LRange(key, int64(0), int64(-1)).Result()
 }
+
+func LPop(client *redis.Client, key string) (string, error) {
+	scmd := client.LPop(key)
+	val, err := scmd.Result()
+	return val, err
+}
+
+func RPop(client *redis.Client, key string) (string, error) {
+	scmd := client.RPop(key)
+	val, err := scmd.Result()
+	return val, err
+}
+
+func RPopLPush(client *redis.Client, src, dest string) (string, error) {
+	scmd := client.RPopLPush(src, dest)
+	val, err := scmd.Result()
+	return val, err
+}
