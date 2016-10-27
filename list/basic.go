@@ -48,7 +48,7 @@ func main() {
 	_ = util.LPush(client, key1, val0)
 
 	// LPUSHed LIST
-	fmt.Println("# LRange", key1, 0, -1)
+	fmt.Println("# LRANGE", key1, 0, -1)
 	list, _ = util.LRangeAll(client, key1)
 
 	pp.Println(list)
@@ -60,7 +60,7 @@ func main() {
 	fmt.Println()
 
 	// LPOPed LIST
-	fmt.Println("# LRange", key1, 0, -1)
+	fmt.Println("# LRANGE", key1, 0, -1)
 	list, _ = util.LRangeAll(client, key1)
 
 	pp.Println(list)
@@ -74,7 +74,7 @@ func main() {
 	fmt.Println()
 
 	// RPOPed LIST
-	fmt.Println("# LRange", key1, 0, -1)
+	fmt.Println("# LRANGE", key1, 0, -1)
 	list, _ = util.LRangeAll(client, key1)
 
 	pp.Println(list)
@@ -83,6 +83,26 @@ func main() {
 	// RPUSH three
 	fmt.Println("# RPUSH", key1, val3)
 	_ = util.RPush(client, key1, val3)
+
+	fmt.Println()
+
+	// LINDEX listkey 0
+	fmt.Println("# LINDEX", key1, 0)
+	l, _ := util.LIndex(client, key1, int64(0))
+
+	pp.Println(l)
+
+	// LINDEX listkey 1
+	fmt.Println("# LINDEX", key1, 1)
+	l, _ = util.LIndex(client, key1, int64(1))
+
+	pp.Println(l)
+
+	// LINDEX listkey 1
+	fmt.Println("# LINDEX", key1, -1)
+	l, _ = util.LIndex(client, key1, int64(-1))
+
+	pp.Println(l)
 
 	fmt.Println()
 
@@ -95,7 +115,7 @@ func main() {
 	fmt.Println()
 
 	// RPOPLPUSHed LIST
-	fmt.Println("# LRange", key1, 0, -1)
+	fmt.Println("# LRANGE", key1, 0, -1)
 	list, _ = util.LRangeAll(client, key1)
 
 	pp.Println(list)
@@ -103,11 +123,50 @@ func main() {
 	fmt.Println()
 
 	// RPOPLPUSHed LIST
-	fmt.Println("# LRange", key2, 0, -1)
+	fmt.Println("# LRANGE", key2, 0, -1)
 	list, _ = util.LRangeAll(client, key2)
 
 	pp.Println(list)
 
+	fmt.Println()
+
+	// RPUSH three
+	fmt.Println("# RPUSH", key1, val3)
+	_ = util.RPush(client, key1, val3)
+
+	fmt.Println()
+
+	// LINSERT listkey BEFORE three "two and a half"
+	fmt.Println("# LINSERT", key1, "BEFORE", "three", "two and a half")
+	_ = util.LInsert(client, key1, "BEFORE", "three", "two and a half")
+
+	fmt.Println()
+
+	// LINSERTed LIST
+	fmt.Println("# LRANGe", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+	fmt.Println()
+
+	// LINSERT listkey AFTER one "one and a half"
+	fmt.Println("# LINSERT", key1, "AFTER", "one", "one and a half")
+	_ = util.LInsert(client, key1, "AFTER", "one", "one and a half")
+
+	fmt.Println()
+
+	// LINSERTed LIST
+	fmt.Println("# LRANGE", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+	fmt.Println()
+
+	// LLEN listkey
+	fmt.Println("# LLEN", key1)
+	llen := util.LLen(client, key1)
+
+	pp.Println(llen)
 	fmt.Println()
 
 	// delete listkey

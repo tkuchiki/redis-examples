@@ -55,3 +55,19 @@ func RPopLPush(client *redis.Client, src, dest string) (string, error) {
 	val, err := scmd.Result()
 	return val, err
 }
+
+func LIndex(client *redis.Client, key string, index int64) (string, error) {
+	scmd := client.LIndex(key, index)
+	val, err := scmd.Result()
+	return val, err
+}
+
+func LInsert(client *redis.Client, key, op string, pivot, value interface{}) error {
+	icmd := client.LInsert(key, op, pivot, value)
+	return icmd.Err()
+}
+
+func LLen(client *redis.Client, key string) int64 {
+	icmd := client.LLen(key)
+	return icmd.Val()
+}
