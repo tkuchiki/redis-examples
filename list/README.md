@@ -159,3 +159,69 @@ redis> RPUSH listkey three
 redis> LLEN listkey
 (integer) 3
 ```
+
+## LREM
+
+- O(N)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey one
+(integer) 3
+redis> RPUSH listkey three
+(integer) 4
+redis> RPUSH listkey one
+(integer) 5
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+3) "one"
+4) "three"
+5) "one"
+redis> LREM listkey 2 one
+(integer) 2
+redis> LRANGE listkey 0 -1
+1) "two"
+2) "three"
+3) "one"
+redis> RPUSH listkey two
+(integer) 4
+redis> RPUSH listkey two
+(integer) 5
+redis> LRANGE listkey 0 -1
+1) "two"
+2) "three"
+3) "one"
+4) "two"
+5) "two"
+redis> LREM listkey 0 two
+(integer) 3
+redis> LRANGE listkey 0 -1
+1) "three"
+2) "one"
+```
+
+## LSET
+
+- O(N)
+    - first or last = O(1)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey three
+(integer) 3
+redis> LSET listkey 0 1
+OK
+redis> LRANGE listkey 0 -1
+1) "1"
+2) "two"
+3) "three"
+redis> LSET listkey 3 four
+(error) ERR index out of range
+```

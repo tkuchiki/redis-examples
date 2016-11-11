@@ -71,3 +71,13 @@ func LLen(client *redis.Client, key string) int64 {
 	icmd := client.LLen(key)
 	return icmd.Val()
 }
+
+func LRem(client *redis.Client, key string, count int64, value interface{}) int64 {
+	icmd := client.LRem(key, count, value)
+	return icmd.Val()
+}
+
+func LSet(client *redis.Client, key string, index int64, value interface{}) error {
+	statusCmd := client.LSet(key, index, value)
+	return statusCmd.Err()
+}
