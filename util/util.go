@@ -2,6 +2,7 @@ package util
 
 import (
 	"gopkg.in/redis.v5"
+	"time"
 )
 
 func NewClient() *redis.Client {
@@ -85,4 +86,8 @@ func LSet(client *redis.Client, key string, index int64, value interface{}) erro
 func LTrim(client *redis.Client, key string, start, stop int64) error {
 	statusCmd := client.LTrim(key, start, stop)
 	return statusCmd.Err()
+}
+
+func BLPop(client *redis.Client, timeout time.Duration, keys ...string) ([]string, error) {
+	return client.BLPop(timeout, keys...).Result()
 }

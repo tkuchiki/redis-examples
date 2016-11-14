@@ -76,7 +76,7 @@ redis> LRANGE listkey 0 -1
 2) "two"
 ```
 
-## RPOPLPUSH
+## RPOPLPUSH source destination
 
 - O(1)
 
@@ -92,7 +92,7 @@ redis> LRANGE destlistkey 0 -1
 1) "three"
 ```
 
-## LINDEX
+## LINDEX key index
 
 - O(N)
 
@@ -117,7 +117,7 @@ redis> LINDEX listkey -1
 "three"
 ```
 
-## LINSERT
+## LINSERT key BEFORE|AFTER pivot value
 
 - O(N)
 
@@ -145,7 +145,7 @@ redis> LRANGE listkey 0 -1
 5) "three"
 ```
 
-## LLEN
+## LLEN key
 
 - O(1)
 
@@ -160,7 +160,7 @@ redis> LLEN listkey
 (integer) 3
 ```
 
-## LREM
+## LREM key count value
 
 - O(N)
 
@@ -204,7 +204,7 @@ redis> LRANGE listkey 0 -1
 2) "one"
 ```
 
-## LSET
+## LSET key index value
 
 - O(N)
     - first or last = O(1)
@@ -226,7 +226,7 @@ redis> LSET listkey 3 four
 (error) ERR index out of range
 ```
 
-## LTRIM
+## LTRIM key start stop
 
 - O(N)
 
@@ -249,4 +249,24 @@ OK
 redis> LRANGE listkey 0 -1
 1) "three"
 2) "four"
+```
+
+## BLPOP key [key ...] timeout
+
+- O(1)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey2 two
+(integer) 1
+redis> BLPOP listkey listkey2 5 // non-blocking
+1) "listkey"
+2) "one"
+redis> BLPOP listkey listkey2 5 // non-blocking
+1) "listkey2"
+2) "two"
+redis> BLPOP listkey listkey2 5 // blocking
+(nil)
+(5.04s)
 ```
