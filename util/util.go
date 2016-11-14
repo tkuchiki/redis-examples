@@ -81,3 +81,8 @@ func LSet(client *redis.Client, key string, index int64, value interface{}) erro
 	statusCmd := client.LSet(key, index, value)
 	return statusCmd.Err()
 }
+
+func LTrim(client *redis.Client, key string, start, stop int64) error {
+	statusCmd := client.LTrim(key, start, stop)
+	return statusCmd.Err()
+}

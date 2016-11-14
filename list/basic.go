@@ -255,6 +255,18 @@ func main() {
 
 	fmt.Println()
 
+	// LTRIM listkey 2 -1
+	fmt.Println("# LTRIM", key1, 2, -1)
+	_ = util.LTrim(client, key1, int64(2), int64(-1))
+
+	// LTRIMed listkey
+	fmt.Println("# LRANGE", key1, 0, -1)
+	list, _ = util.LRangeAll(client, key1)
+
+	pp.Println(list)
+
+	fmt.Println()
+
 	// delete listkey
 	fmt.Println("# DEL", key1)
 	_ = util.Del(client, key1)

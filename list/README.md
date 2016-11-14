@@ -225,3 +225,28 @@ redis> LRANGE listkey 0 -1
 redis> LSET listkey 3 four
 (error) ERR index out of range
 ```
+
+## LTRIM
+
+- O(N)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey three
+(integer) 3
+redis> RPUSH listkey four
+(integer) 4
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+3) "three"
+4) "four"
+redis> LTRIM listkey 2 -1
+OK
+redis> LRANGE listkey 0 -1
+1) "three"
+2) "four"
+```
