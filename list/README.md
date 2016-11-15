@@ -258,15 +258,45 @@ redis> LRANGE listkey 0 -1
 ```
 redis> RPUSH listkey one
 (integer) 1
-redis> RPUSH listkey2 two
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey2 three
 (integer) 1
-redis> BLPOP listkey listkey2 5 // non-blocking
+redis> BLPOP listkey listkey2 0 // non-blocking
 1) "listkey"
 2) "one"
-redis> BLPOP listkey listkey2 5 // non-blocking
-1) "listkey2"
+redis> BLPOP listkey listkey2 0 // non-blocking
+1) "listkey"
 2) "two"
+redis> BLPOP listkey listkey2 0 // non-blocking
+1) "listkey2"
+2) "three"
 redis> BLPOP listkey listkey2 5 // blocking
 (nil)
-(5.04s)
+(5.02s)
+```
+
+## BRPOP key [key ...] timeout
+
+- O(1)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey2 three
+(integer) 1
+redis> BRPOP listkey listkey2 5 // non-blocking
+1) "listkey"
+2) "two"
+redis> BRPOP listkey listkey2 5 // non-blocking
+1) "listkey"
+2) "one"
+redis> BRPOP listkey listkey2 5 // non-blocking
+1) "listkey2"
+2) "three"
+redis> BRPOP listkey listkey2 5 // blocking
+(nil)
+(5.02s)
 ```

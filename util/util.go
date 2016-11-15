@@ -91,3 +91,7 @@ func LTrim(client *redis.Client, key string, start, stop int64) error {
 func BLPop(client *redis.Client, timeout time.Duration, keys ...string) ([]string, error) {
 	return client.BLPop(timeout, keys...).Result()
 }
+
+func BRPop(client *redis.Client, timeout time.Duration, keys ...string) ([]string, error) {
+	return client.BRPop(timeout, keys...).Result()
+}
