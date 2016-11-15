@@ -39,7 +39,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			fmt.Println("# BLPOP listkey 0 (blocking...)")
+			fmt.Println("# client1> BLPOP", key1, 0, "(blocking...)")
 			list, _ = util.BLPop(client, time.Duration(0), key1)
 			fmt.Println("// RPUSHed")
 			pp.Println(list)
@@ -53,7 +53,7 @@ func main() {
 		for {
 			time.Sleep(5 * time.Second)
 			v := "blocking"
-			fmt.Println("# RPUSH", key1, v)
+			fmt.Println("# client2> RPUSH", key1, v)
 			_ = util.RPush(client, key1, v)
 			break
 		}
@@ -119,7 +119,7 @@ func main() {
 	go func() {
 		defer wg.Done()
 		for {
-			fmt.Println("# BRPOP listkey 0 (blocking...)")
+			fmt.Println("# client1> BRPOP", key1, 0, "(blocking...)")
 			list, _ = util.BRPop(client, time.Duration(0), key1)
 			fmt.Println("// RPUSHed")
 			pp.Println(list)
@@ -133,7 +133,7 @@ func main() {
 		for {
 			time.Sleep(5 * time.Second)
 			v := "blocking"
-			fmt.Println("# RPUSH", key1, v)
+			fmt.Println("# client2> RPUSH", key1, v)
 			_ = util.RPush(client, key1, v)
 			break
 		}
@@ -144,9 +144,6 @@ func main() {
 	// RPUSH one
 	fmt.Println("# RPUSH", key1, val1)
 	_ = util.RPush(client, key1, val1)
-
-	fmt.Println()
-
 	// RPUSH two
 	fmt.Println("# RPUSH", key2, val2)
 	_ = util.RPush(client, key2, val2)
@@ -169,10 +166,78 @@ func main() {
 
 	// BLPOP listkey listkey2 0
 	fmt.Println("# BRPOP", key1, key2, 5, "(timeout)")
-	list, _ = util.BRPop(client, time.Duration(5), key1, key2)
+	list, _ = util.BRPop(client, 5*time.Second, key1, key2)
 
 	pp.Println(list)
 	fmt.Println()
+
+	srckey := "src"
+	destkey := "dest"
+	val3 := "three"
+
+	// RPUSH src one
+	fmt.Println("# RPUSH", srckey, val1)
+	_ = util.RPush(client, srckey, val1)
+	// RPUSH src two
+	fmt.Println("# RPUSH", srckey, val2)
+	_ = util.RPush(client, srckey, val2)
+	// RPUSH dest three
+	fmt.Println("# RPUSH", destkey, val3)
+	_ = util.RPush(client, destkey, val3)
+
+	fmt.Println()
+
+	// BLPOP listkey listkey2 0
+	fmt.Println("# BRPOPLPUSH", srckey, destkey, 0)
+	rpoped, _ := util.BRPopLPush(client, srckey, destkey, time.Duration(0))
+
+	pp.Println(rpoped)
+	fmt.Println()
+
+	// BLPOP listkey listkey2 0
+	fmt.Println("# BRPOPLPUSH", srckey, destkey, 0)
+	rpoped, _ = util.BRPopLPush(client, srckey, destkey, time.Duration(0))
+
+	pp.Println(rpoped)
+	fmt.Println()
+
+	fmt.Println("# LRANGE", srckey, 0, -1)
+	list, _ = util.LRangeAll(client, srckey)
+
+	pp.Println(list)
+	fmt.Println()
+
+	fmt.Println("# LRANGE", destkey, 0, -1)
+	list, _ = util.LRangeAll(client, destkey)
+
+	pp.Println(list)
+	fmt.Println()
+
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		for {
+			fmt.Println("# client1> BRPOPLPUSH", srckey, destkey, 0, "(blocking...)")
+			rpoped, _ = util.BRPopLPush(client, srckey, destkey, time.Duration(0))
+			fmt.Println("// RPUSHed")
+			pp.Println(rpoped)
+			fmt.Println()
+			break
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		for {
+			time.Sleep(5 * time.Second)
+			v := "blocking"
+			fmt.Println("# client2> RPUSH", srckey, v)
+			_ = util.RPush(client, srckey, v)
+			break
+		}
+	}()
+
+	wg.Wait()
 
 	// delete listkey
 	fmt.Println("# DEL", key1)

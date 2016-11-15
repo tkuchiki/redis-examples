@@ -95,3 +95,9 @@ func BLPop(client *redis.Client, timeout time.Duration, keys ...string) ([]strin
 func BRPop(client *redis.Client, timeout time.Duration, keys ...string) ([]string, error) {
 	return client.BRPop(timeout, keys...).Result()
 }
+
+func BRPopLPush(client *redis.Client, src, dest string, timeout time.Duration) (string, error) {
+	scmd := client.BRPopLPush(src, dest, timeout)
+	val, err := scmd.Result()
+	return val, err
+}

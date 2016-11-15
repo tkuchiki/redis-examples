@@ -276,6 +276,14 @@ redis> BLPOP listkey listkey2 5 // blocking
 (5.02s)
 ```
 
+```
+redis client1> BLPOP listkey 0 // blocking | redis client2> RPUSH listkey one
+                                           | (integer) 1
+1) "listkey"
+2) "one"
+(3.30s)
+```
+
 ## BRPOP key [key ...] timeout
 
 - O(1)
@@ -299,4 +307,55 @@ redis> BRPOP listkey listkey2 5 // non-blocking
 redis> BRPOP listkey listkey2 5 // blocking
 (nil)
 (5.02s)
+```
+
+```
+redis client1> BRPOP listkey 0 // blocking | redis client2> RPUSH listkey one
+                                           | (integer) 1
+1) "listkey"
+2) "one"
+(3.30s)
+```
+
+## BRPOPLPUSH source destination timeout
+
+- O(1)
+
+```
+redis> RPUSH listkey one
+(integer) 1
+redis> RPUSH listkey two
+(integer) 2
+redis> RPUSH listkey2 three
+(integer) 1
+redis> BRPOPLPUSH listkey listkey2 5 // non-blocking
+"two"
+redis> BRPOPLPUSH listkey listkey2 5 // non-blocking
+"one"
+redis> LRANGE listkey 0 -1
+(empty list or set)
+redis> LRANGE listkey2 0 -1
+1) "one"
+2) "two"
+3) "three"
+redis> BRPOPLPUSH listkey listkey2 5 // blocking
+(nil)
+(5.05s)
+```
+
+```
+redis client1> RPUSH listkey one
+(integer) 1
+redis client1> RPUSH listkey2 two
+(integer) 1
+redis client1> BRPOPLPUSH listkey listkey2 0
+"one"
+redis client1> BRPOPLPUSH listkey listkey2 0 // blocking | redis client2> RPUSH listkey zero
+                                                         | (integer) 1
+"zero"
+(15.42s)
+redis client1> LRANGE listkey2 0 -1
+1) "zero"
+2) "one"
+3) "two"
 ```
