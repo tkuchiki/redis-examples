@@ -22,10 +22,15 @@ redis> RPUSH listkey "three"
 - O(S+N)
 
 ```
+redis> RPUSH listkey "one"
+(integer) 1
+redis> RPUSH listkey "two"
+(integer) 2
 redis> LRANGE 0 1
 1) "one"
 2) "two"
-
+redis> RPUSH listkey "three"
+(integer) 3
 # retrieve all the items of a list
 redis> LRANGE 0 -1
 1) "one"
@@ -38,6 +43,16 @@ redis> LRANGE 0 -1
 - O(1)
 
 ```
+redis> RPUSH listkey "one"
+(integer) 1
+redis> RPUSH listkey "two"
+(integer) 2
+redis> RPUSH listkey "three"
+(integer) 3
+redis> LRANGE 0 -1
+1) "one"
+2) "two"
+3) "three
 redis> LPUSH listkey "zero"
 (integer) 4
 redis> LRANGE 0 -1
@@ -56,6 +71,19 @@ redis> LRANGE 0 -1
 - O(1)
 
 ```
+redis> RPUSH listkey "zero"
+(integer) 1
+redis> RPUSH listkey "one"
+(integer) 2
+redis> RPUSH listkey "two"
+(integer) 3
+redis> RPUSH listkey "three"
+(integer) 4
+redis> LRANGE 0 -1
+1) "zero"
+2) "one"
+3) "two"
+4) "three
 redis> LPOP listkey
 "zero"
 redis> LRANGE listkey 0 -1
@@ -69,6 +97,16 @@ redis> LRANGE listkey 0 -1
 - O(1)
 
 ```
+redis> RPUSH listkey "one"
+(integer) 1
+redis> RPUSH listkey "two"
+(integer) 2
+redis> RPUSH listkey "three"
+(integer) 3
+redis> LRANGE listkey 0 -1
+1) "one"
+2) "two"
+3) "three"
 redis> RPOP listkey
 "three"
 redis> LRANGE listkey 0 -1
@@ -81,14 +119,22 @@ redis> LRANGE listkey 0 -1
 - O(1)
 
 ```
-redis> RPUSH listkey three
+redis> RPUSH src "one"
+(integer) 1
+redis> RPUSH src "two"
+(integer) 2
+redis> RPUSH src three
 (integer) 3
-redis> RPOPLPUSH listkey destlistkey
-"three"
-redis> LRANGE listkey 0 -1
+redis> LRANGE src 0 -1
 1) "one"
 2) "two"
-redis> LRANGE destlistkey 0 -1
+3) "three"
+redis> RPOPLPUSH src dest
+"three"
+redis> LRANGE src 0 -1
+1) "one"
+2) "two"
+redis> LRANGE dest 0 -1
 1) "three"
 ```
 
@@ -322,39 +368,39 @@ redis client1> BRPOP listkey 0 // blocking | redis client2> RPUSH listkey one
 - O(1)
 
 ```
-redis> RPUSH listkey one
+redis> RPUSH src one
 (integer) 1
-redis> RPUSH listkey two
+redis> RPUSH src two
 (integer) 2
-redis> RPUSH listkey2 three
+redis> RPUSH dest three
 (integer) 1
-redis> BRPOPLPUSH listkey listkey2 5 // non-blocking
+redis> BRPOPLPUSH src dest 5 // non-blocking
 "two"
-redis> BRPOPLPUSH listkey listkey2 5 // non-blocking
+redis> BRPOPLPUSH src dest 5 // non-blocking
 "one"
-redis> LRANGE listkey 0 -1
+redis> LRANGE src 0 -1
 (empty list or set)
-redis> LRANGE listkey2 0 -1
+redis> LRANGE dest 0 -1
 1) "one"
 2) "two"
 3) "three"
-redis> BRPOPLPUSH listkey listkey2 5 // blocking
+redis> BRPOPLPUSH src dest 5 // blocking
 (nil)
 (5.05s)
 ```
 
 ```
-redis client1> RPUSH listkey one
+redis client1> RPUSH src one
 (integer) 1
-redis client1> RPUSH listkey2 two
+redis client1> RPUSH dest two
 (integer) 1
-redis client1> BRPOPLPUSH listkey listkey2 0
+redis client1> BRPOPLPUSH src dest 0
 "one"
-redis client1> BRPOPLPUSH listkey listkey2 0 // blocking | redis client2> RPUSH listkey zero
-                                                         | (integer) 1
+redis client1> BRPOPLPUSH src dest 0 // blocking | redis client2> RPUSH src zero
+                                                 | (integer) 1
 "zero"
 (15.42s)
-redis client1> LRANGE listkey2 0 -1
+redis client1> LRANGE dest 0 -1
 1) "zero"
 2) "one"
 3) "two"
