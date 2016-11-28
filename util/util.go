@@ -101,3 +101,12 @@ func BRPopLPush(client *redis.Client, src, dest string, timeout time.Duration) (
 	val, err := scmd.Result()
 	return val, err
 }
+
+func SMembers(client *redis.Client, key string) ([]string, error) {
+	return client.SMembers(key).Result()
+}
+
+func SAdd(client *redis.Client, key string, members ...interface{}) error {
+	intcmd := client.SAdd(key, members...)
+	return intcmd.Err()
+}
