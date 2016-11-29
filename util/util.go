@@ -110,3 +110,11 @@ func SAdd(client *redis.Client, key string, members ...interface{}) error {
 	intcmd := client.SAdd(key, members...)
 	return intcmd.Err()
 }
+
+func SCard(client *redis.Client, key string) int64 {
+	return client.SCard(key).Val()
+}
+
+func SDiff(client *redis.Client, keys ...string) ([]string, error) {
+	return client.SDiff(keys...).Result()
+}
